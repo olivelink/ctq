@@ -17,7 +17,7 @@ class Resourceful(object):
         dict
     ] = None  # Used by NamedResourceFactoryProperty
 
-    def _ctq_get_named_resource(self, name: str, default: Any = None) -> Any:
+    def _ctq_get_named_resource(self, name: str) -> Any:
         """Return a named resource
 
         named resources are traversable by self[name], this function when called
@@ -28,11 +28,10 @@ class Resourceful(object):
 
         Arguments:
             name: The name of the tinterface. This must be a string.
-            default: The object to be returned if no interface was found.
 
         Returns:
-            object: If the the tinterface is found
-            None: If no tinterface is found
+
+            The object being request. None otherwise.
         """
         cls = type(self)
         for attribute_name in dir(cls):
@@ -43,7 +42,7 @@ class Resourceful(object):
             ):
                 factory = getattr(self, attribute_name)
                 return factory()
-        return default
+        return None
 
     def __getitem__(self, key: str) -> Any:
         """Returns: the result of of calling ``_ctq_get_named_resource``. If the result is

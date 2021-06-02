@@ -43,6 +43,8 @@ class TestNamedResource(TestCase):
         self.assertIsInstance(r["mid"]["leaf"], Leaf)
         self.assertIsInstance(r.get_mid(), Mid)
         self.assertIsInstance(r["mid"].get_leaf(), Leaf)
+        with self.assertRaises(KeyError):
+            r["foo"]
 
     def test_cache(self):
         r = self.root
