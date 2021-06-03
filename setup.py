@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(name='ctq',
       version='1.0.dev1',
-      description='Resource tree helpers',
+      description=open('README.rst').read(),
       long_description=open('README.rst').read(),
       long_description_content_type='text/x-rst',
       classifiers=['Programming Language :: Python', 'Framework :: Pyramid'],
