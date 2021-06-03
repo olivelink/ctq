@@ -3,8 +3,8 @@ ctq
 
 A library of resource tree helps targeted at the pyramid framework.
 
-A tour
-------
+Constructing a resource tree
+----------------------------
 
 Pyramid when seeking to find an context object in a resource tree takes a URL
 such as ``/books/bible`` and atempts to traverse a root object treating the
@@ -82,6 +82,45 @@ sym-links within the traversal tree.::
     'shelf-2'
     >>> root2['shelf-default'].__name__
     'shelf-1'
+
+Event Handling
+--------------
+
+cqt provides a function ``emit(target: Any, name: str, data: Optional[dict])``
+which creates an event object, searches and calls event handlers starting with
+the target and bubbeling up to the root of a resource tree.
+
+Event handlers can be declared using the ``@handle(*event_names, priority:
+Optional[int])`` decorator on an instance method which accepts the paramiter
+``event``.
+
+For example::
+
+    >>> from ctq import handle
+    >>> from ctq import emit
+
+    >>> class EventTreeRoot(object):
+    ...
+    ...     @handle('after-edit')
+    ...     def on_after_edit(self, event):
+    ...         print("Was very edited.")
+
+    >>> class Foo(object):
+    ...
+    ...     @handle('after-edit')
+    ...     def on_after_edit(self, event):
+    ...         print("Was edited.")
+
+    >>> foo = Foo()
+    >>> foo.__parent__ = EventTreeRoot()
+
+    >>> emit(foo, 'after-edit')
+    Was edited.
+    Was very edited.
+
+
+Helper methods
+--------------
 
 Additionally there are some functions that enable performing verious tasks
 around the tree
