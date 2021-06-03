@@ -84,7 +84,7 @@ sym-links within the traversal tree.::
     'shelf-1'
 
 Additionally there are some functions that enable performing verious tasks
-around the tree::
+around the tree
 
 Traversing back up the tree with ``traverse_up(obj)``::
 
