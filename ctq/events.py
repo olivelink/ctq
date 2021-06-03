@@ -22,6 +22,7 @@ For example::
     ...         print("Was edited.")
 
     >>> foo = Foo()
+    >>> foo.__parent__ Root()
     >>> emit(foo, 'after-edit')
     Was edited.
     Was very edited.
