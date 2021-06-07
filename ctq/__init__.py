@@ -7,3 +7,6 @@ from .named_resource import Resourceful
 from .traversal import get_root
 from .traversal import resource_path_names
 from .traversal import traverse_up
+from .workflow import Workflowable
+from .workflow import WorkflowIllegalTransitionError
+from .workflow import WorkflowUnknownActionError
