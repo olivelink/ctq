@@ -118,6 +118,54 @@ For example::
     Was edited.
     Was very edited.
 
+Workflow behavior
+-----------------
+
+cqt provides a ``Workflowable`` class to add workflow behavior to objects this
+adds some methods that are handy in performing workflow state transitions on
+objects including emmiting events and guarding agenst illegal transitions.
+
+The current workflow is get/set on the property ``self.workflow_state`` and
+transitions are defined in the property ``self.workflow_transitions``. Events
+emitted that the form ``workflow-before-ACTION`` and ``workflow-after-ACTION``
+
+For example::
+
+    >>> from ctq import Workflowable
+
+    >>> class Document(Workflowable):
+    ...
+    ...     workflow_state = "new"
+    ...
+    ...     workflow_transitions = {
+    ...         "submit-for-review": {"from": ["new"], "to": "pending-review"},
+    ...         "publish": {"from": ["new", "pending-review"], "to": "public"},
+    ...         "retract": {"from": ["public"], "to": "retracted"},
+    ...     }
+    ...
+    ...     @handle("workflow-before-publish")
+    ...     def on_before_publish(self, event):
+    ...         print("about to publish")
+    ...
+    ...     @handle("workflow-after-publish")
+    ...     def on_after_publish(self, event):
+    ...         print("published!")
+
+To action a workflow transition calle the ``self.workflow_action(action)``
+method::
+    
+    >>> doc = Document()
+    >>> doc.workflow_state
+    'new'
+    >>> doc.workflow_action("publish")
+    about to publish
+    published!
+    >>> doc.workflow_state
+    'public'
+    >>> doc.workflow_action("publish")
+    Traceback (most recent call last):
+    ...
+    ctq.workflow.WorkflowIllegalTransitionError: Can not publish on an instance of Document in the state public
 
 Helper methods
 --------------
