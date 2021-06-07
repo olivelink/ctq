@@ -30,6 +30,7 @@ For example::
 """
 from functools import partial
 from typing import Any
+from typing import Optional
 
 
 def handle(*event_names, priority=None):
@@ -46,7 +47,7 @@ def handle(*event_names, priority=None):
     return partial(EventHandlerProperty, event_names=event_names, priority=priority)
 
 
-def emit(target, name, data=None):
+def emit(target: Any, name: str, data: Optional[dict] = None):
     """Create an event and call matching event handlers starting with the target
     bubbling up to the root of a resource tree.
 
