@@ -1,7 +1,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-setup(name='ctq',
+setup(name='ctq-sqlalchemy',
       version='1.0.dev1',
       description=open('README.rst').read(),
       long_description=open('README.rst').read(),
