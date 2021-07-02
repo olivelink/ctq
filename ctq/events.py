@@ -150,6 +150,8 @@ class EventHandlerProperty(object):
         self.handler = handler
         self.event_names = event_names
         self.priority = priority
+        if hasattr(handler, "__doc__"):
+            self.__doc__ = handler.__doc__
 
     def match(self, event):
         """Returns: True if the event matches this handler otherwise None"""
