@@ -169,11 +169,14 @@ class NamedResourceFactoryProperty(object):
         """
         # Check if there is a resource_cache_get through acquire()
         resource_cache_get = getattr(acquire(inst), "resource_cache_get", None)
+        
         if resource_cache_get:
-            path_names = resource_path_names(inst) + (self.name,)
-            cached_resource = resource_cache_get(path_names)
-            if cached_resource is not None:
-                return cached_resource
+            base_path_names = resource_path_names(inst)
+            if base_path_names is not None:  # Can't resolve path names
+                path_names = base_path_names + (self.name,)
+                cached_resource = resource_cache_get(path_names)
+                if cached_resource is not None:
+                    return cached_resource
 
         # Check the _ctq_named_resource_cache on the instance
         if inst._ctq_named_resource_cache is not None:
@@ -187,13 +190,16 @@ class NamedResourceFactoryProperty(object):
         """Save a resource into a cache."""
         resource_cache_set = getattr(acquire(inst), "resource_cache_set", None)
         if resource_cache_set is not None:
-            path_names = resource_path_names(inst) + (self.name,)
-            resource_cache_set(path_names, resource)
+            base_path_names = resource_path_names(inst)
+            if base_path_names is not None:  # Can't resolve path names
+                path_names = base_path_names + (self.name,)
+                resource_cache_set(path_names, resource)
+                return
+
+        if inst._ctq_named_resource_cache is None:
+            inst._ctq_named_resource_cache = {self.name: resource}
         else:
-            if inst._ctq_named_resource_cache is None:
-                inst._ctq_named_resource_cache = {self.name: resource}
-            else:
-                inst._ctq_named_resource_cache[self.name] = resource
+            inst._ctq_named_resource_cache[self.name] = resource
 
     def bind_resource_to_tree(self, inst: Resourceful, resource: Any):
         """Annotate a resource object binding it to a resource tree by setting
