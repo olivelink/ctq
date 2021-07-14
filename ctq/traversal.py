@@ -26,7 +26,9 @@ def resource_path_names(obj: Any) -> tuple[str]:
     """Returns: A tuple of path names from the root object to the ``obj``"""
     names = []
     for resource in traverse_up(obj):
-        name = getattr(resource, "__name__", "") or ""
+        name = getattr(resource, "__name__", None)
+        if name is None:  # It is not possible to calculate the resource path names
+            return None
         names.append(name)
     names.reverse()
     return tuple(names)
