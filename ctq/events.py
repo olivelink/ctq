@@ -33,7 +33,7 @@ from typing import Any
 from typing import Optional
 
 
-def handle(*event_names, for_target=None, priority=None):
+def handle(*event_names, target=None, priority=None):
     """Create an EventHandlerProperty from an instance method. The instance method
     is to accept two arguments - self, event.
 
@@ -41,7 +41,7 @@ def handle(*event_names, for_target=None, priority=None):
 
         *event_names: The event names that the function is to handle.
 
-        for_target: The type of target to handle for.
+        target: The type of target to handle for.
 
         priority: An int priority indicating that an event handler should be
         called before others. Lower numbers are called first.
@@ -49,7 +49,7 @@ def handle(*event_names, for_target=None, priority=None):
     return partial(
         EventHandlerProperty,
         event_names=event_names,
-        for_target=for_target,
+        target=target,
         priority=priority,
     )
 
@@ -142,7 +142,7 @@ class EventHandlerProperty(object):
     meta data and on the class instance provides the handler function itself
     """
 
-    def __init__(self, handler, event_names=None, for_target=None, priority=None):
+    def __init__(self, handler, event_names=None, target=None, priority=None):
         """Initialize property
 
         Args:
@@ -151,14 +151,14 @@ class EventHandlerProperty(object):
 
             event_names: A list of names that the event handler is valid for
 
-            for_target: The type of target to select for event handeling
+            target: The type of target to select for event handeling
 
             priority: An optional numerical priority number which allows some
             event handlers to be called first
         """
         self.handler = handler
         self.event_names = event_names
-        self.for_target = for_target
+        self.target = target
         self.priority = priority
         if hasattr(handler, "__doc__"):
             self.__doc__ = handler.__doc__
@@ -176,10 +176,10 @@ class EventHandlerProperty(object):
 
     def match_for_target(self, event):
         """Returns: True if the event target matches the event target_for"""
-        if self.for_target is None:
+        if self.target is None:
             return True
         else:
-            return isinstance(event.target, self.for_target)
+            return isinstance(event.target, self.target)
 
     def __get__(self, inst, owner):
         """Some serious depp python stuff going on here....
