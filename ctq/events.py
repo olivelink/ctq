@@ -160,6 +160,7 @@ class EventHandlerProperty(object):
         self.event_names = event_names
         self.target = target
         self.priority = priority
+        self.owner = None  # Set during __get__
         if hasattr(handler, "__doc__"):
             self.__doc__ = handler.__doc__
 
@@ -178,6 +179,9 @@ class EventHandlerProperty(object):
         """Returns: True if the event target matches the event target_for"""
         if self.target is None:
             return True
+        if self.target == "self":
+            assert self.owner
+            return isinstance(event.target, self.owner)
         else:
             return isinstance(event.target, self.target)
 
@@ -192,6 +196,7 @@ class EventHandlerProperty(object):
         iterating the class objects contents and testing isinstance, yet the instance of the
         class needs the function to be working too. See also the named resource decorator.
         """
+        self.owner = owner
 
         if inst is None:
             # the attribute access is on the class object
