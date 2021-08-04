@@ -44,6 +44,18 @@ class Workflowable(object):
         """
         self.workflow_state = state
 
+    @property
+    def workflow_valid_actions(self):
+        """Returns: list of string indicating the valid actions
+        that can be taken.
+        """
+        result = []
+        state = self.workflow_state
+        for (name, props) in self.workflow_transitions.items():
+            if state in props["from"]:
+                result.append(name)
+        return result
+
     def workflow_action(self, action: str):
         """Find an execute a workflow transition for a given action. The
         transition is sourced from ``self.workflow_transitions``.
