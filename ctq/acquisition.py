@@ -12,7 +12,7 @@ content sources.
 """
 
 from .traversal import traverse_up
-
+from inspect import currentframe
 
 _MISSING_ATTRIBUTE = object()  # an object representing no returned attribute
 
@@ -22,12 +22,23 @@ class AcquisitionProxy(object):
     of the current domain object
     """
 
-    def __init__(self, subject: object):
+    def __init__(self, subject: object = None):
         """Initialize acquisition proxy
 
         Args:
             subject: The current object to start the search
         """
+        if subject is None:
+            try:
+                frame = currentframe().f_back
+            except AttributeError as err:
+                raise Exception("Unknown subject") from err
+            if frame is None:
+                raise Exception("Unknown subject")
+            try:
+                subject = frame.f_locals["self"]
+            except KeyError as err:
+                raise Exception("Unknown subject") from err
         self._ctq_subject = subject
 
     def __getattr__(self, name: str):
