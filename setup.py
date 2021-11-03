@@ -2,7 +2,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 setup(name='ctq',
-      version='1.0.dev1',
+      version='0.1',
       description='',
       long_description=open('README.rst').read(),
       long_description_content_type='text/x-rst',
