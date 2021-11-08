@@ -29,6 +29,7 @@ For example::
 
 """
 from functools import partial
+from inspect import currentframe
 from typing import Any
 from typing import Optional
 
@@ -54,7 +55,7 @@ def handle(*event_names, target=None, priority=None):
     )
 
 
-def emit(target: Any, name: str, data: Optional[dict] = None):
+def emit(name: str, data: Optional[dict] = None, /, *, target: Any = None):
     """Create an event and call matching event handlers starting with the target
     bubbling up to the root of a resource tree.
 
@@ -66,6 +67,17 @@ def emit(target: Any, name: str, data: Optional[dict] = None):
 
         data: Extra dictionary data to be available on event.data
     """
+    if target is None:
+        try:
+            frame = currentframe().f_back
+        except AttributeError as err:
+            raise Exception("Unknown target") from err
+        if frame is None:
+            raise Exception("Unknown target")
+        try:
+            target = frame.f_locals["self"]
+        except KeyError as err:
+            raise Exception("Unknown target") from err
     data = data or {}
     event = Event(target, name, data)
     for decorated, bound_handler in get_event_handlers(target):

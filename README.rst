@@ -114,7 +114,7 @@ For example::
     >>> foo = Foo()
     >>> foo.__parent__ = EventTreeRoot()
 
-    >>> emit(foo, 'after-edit')
+    >>> emit('after-edit', target=foo)
     Was edited.
     Was very edited.
 

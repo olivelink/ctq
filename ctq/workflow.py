@@ -92,6 +92,6 @@ class Workflowable(object):
 
         # Perform transition
         event_data = {"action": action, "from_state": from_state, "to_state": to_state}
-        emit(self, f"workflow-before-{action}", event_data)
+        emit(f"workflow-before-{action}", event_data)
         self.workflow_set_state(to_state)
-        emit(self, f"workflow-after-{action}", event_data)
+        emit(f"workflow-after-{action}", event_data)
