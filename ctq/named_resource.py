@@ -124,6 +124,13 @@ class NamedResourceFactoryProperty(object):
         self.factory = factory
         self.no_cache = no_cache
         self.no_parent = no_parent
+        self.__doc__ = None
+        if doc := getattr(factory, "__doc__", None):
+            self.__doc__ = doc
+        self.__annotations__ = None
+        if annotations := getattr(factory, "__annotations__", None):
+            if "return" in annotations:
+                self.__annotations__ = {"return": annotations["return"]}
 
     def __get__(self, inst: Optional[Resourceful], owner) -> Callable:
         """Returns: The ``NamedResourceFactoryProperty`` object for the class
@@ -133,7 +140,12 @@ class NamedResourceFactoryProperty(object):
         if inst is None:
             return self
         else:
-            return partial(self.instance_get_resource, inst)
+            func = partial(self.instance_get_resource, inst)
+            if self.__doc__:
+                func.__doc__ = self.__doc__
+            if self.__annotations__:
+                func.__annotations__ = self.__annotations__
+            return func
 
     def instance_get_resource(self, inst: Resourceful) -> Any:
         """Get the resource object for a given ``self.name`` on an instance.
